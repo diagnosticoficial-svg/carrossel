@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#191515">
+  <meta name="description" content="Carrossel sobre publicidade, conexão e criatividade — Estúdio Criativo.">
+  <title>Publicidade — É fazer sentir</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700;900&family=Playfair+Display:ital,wght@1,700&display=swap" rel="stylesheet">
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+
+  <style>
+    :root {
+      color-scheme: dark;
+      --page: #191515;
+      --accent: #e92f45;
+      --accent-light: #ff8da3;
+      --text: #fff;
+      --muted: #c9b9bd;
+      --slide-ratio: 4 / 5;
+    }
+
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      min-width: 320px;
+      background: var(--page);
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      padding: clamp(20px, 5vh, 48px) 16px;
+      display: grid;
+      place-items: center;
+      background: var(--page);
+      color: var(--text);
+      font-family: 'DM Sans', sans-serif;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .app {
+      width: min(100%, 620px);
+      margin-inline: auto;
+      text-align: center;
+    }
+
+    .top {
+      margin-bottom: 22px;
+    }
+
+    .top small {
+      color: var(--accent-light);
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 4px;
+    }
+
+    .top h1 {
+      margin: 9px 0 0;
+      font-size: clamp(20px, 5vw, 26px);
+      line-height: 1.2;
+    }
+
+    .carousel {
+      position: relative;
+      width: min(100%, 432px);
+      margin-inline: auto;
+      touch-action: pan-y;
+    }
+
+    .slide {
+      position: relative;
+      display: none;
+      width: 100%;
+      aspect-ratio: var(--slide-ratio);
+      overflow: hidden;
+      padding: 9%;
+      color: #24191b;
+      background: #f4e8df;
+      text-align: left;
+      container-type: inline-size;
+      isolation: isolate;
+    }
+
+    .slide.active {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      animation: appear 400ms ease both;
+    }
+
+    @keyframes appear {
+      from { opacity: .4; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .slide .number {
+      font-size: clamp(9px, 2.6cqw, 11px);
+      font-weight: 700;
+      letter-spacing: .25em;
+    }
+
+    .slide .footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: clamp(7px, 2.1cqw, 9px);
+      letter-spacing: .16em;
+      font-weight: 700;
+    }
+
+    .slide h2 {
+      margin: 0;
+      font-size: clamp(36px, 14cqw, 64px);
+      line-height: .98;
+      letter-spacing: -.055em;
+      font-weight: 900;
+    }
+
+    .slide p {
+      margin: 0;
+      font-size: clamp(14px, 5cqw, 22px);
+      line-height: 1.4;
+      font-weight: 500;
+    }
+
+    .red { background: #e92f45; color: #fff; }
+    .pink { background: #f2b7c3; color: #5a2030; }
+    .cream { background: #f4e8df; color: #24191b; }
+    .black { background: #201a1c; color: #f8e9e5; }
+
+    .italic {
+      font-family: 'Playfair Display', serif;
+      font-style: italic;
+    }
+
+    .stamp {
+      position: absolute;
+      right: 8%;
+      bottom: 20%;
+      width: 23%;
+      aspect-ratio: 1;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      display: grid;
+      place-content: center;
+      text-align: center;
+      font-size: clamp(8px, 2.6cqw, 11px);
+      font-weight: 900;
+      line-height: 1.35;
+      transform: rotate(-15deg);
+    }
+
+    .big-word {
+      display: block;
+      font-size: clamp(39px, 18cqw, 78px);
+      font-weight: 900;
+      line-height: .85;
+      letter-spacing: -.075em;
+    }
+
+    .outline {
+      color: transparent;
+      -webkit-text-stroke: 1.5px currentColor;
+      paint-order: stroke fill;
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 14px;
+      margin-top: 23px;
+    }
+
+    .control-button,
+    .download {
+      min-height: 44px;
+      border: 1px solid #ffffff40;
+      border-radius: 30px;
+      padding: 11px 19px;
+      background: #302629;
+      color: #fff;
+      cursor: pointer;
+      font-weight: 700;
+      transition: background-color .2s ease, transform .2s ease, border-color .2s ease;
+    }
+
+    .control-button:hover,
+    .download:hover {
+      border-color: var(--accent);
+      background: var(--accent);
+    }
+
+    .control-button:active,
+    .download:active {
+      transform: scale(.97);
+    }
+
+    button:focus-visible,
+    .dot:focus-visible {
+      outline: 3px solid #ffb0bd;
+      outline-offset: 3px;
+    }
+
+    .counter {
+      min-width: 55px;
+      color: #ffb0bd;
+      font-size: 12px;
+      font-variant-numeric: tabular-nums;
+    }
+
+    .dots {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 7px;
+      min-height: 24px;
+      margin-top: 14px;
+    }
+
+    .dot {
+      width: 8px;
+      height: 8px;
+      border: 0;
+      border-radius: 8px;
+      padding: 0;
+      background: #65575b;
+      cursor: pointer;
+      transition: width .2s ease, background-color .2s ease;
+    }
+
+    .dot.active {
+      width: 22px;
+      background: var(--accent-light);
+    }
+
+    .download {
+      margin-top: 12px;
+      padding-inline: 22px;
+      background: var(--accent);
+    }
+
+    .download:disabled {
+      cursor: wait;
+      opacity: .75;
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+      clip-path: inset(50%);
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 20px 12px; }
+      .top { margin-bottom: 18px; }
+      .slide { padding: 8%; }
+      .controls { gap: 9px; }
+      .control-button { padding-inline: 14px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        scroll-behavior: auto !important;
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: .01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app">
+    <header class="top">
+      <small>ESTÚDIO CRIATIVO · COMUNICAÇÃO</small>
+      <h1>Publicidade em perspectiva.</h1>
+    </header>
+
+    <section class="carousel" aria-label="Carrossel: publicidade em perspectiva" aria-roledescription="carrossel">
+      <!-- Slides are 4:5, the Instagram portrait post ratio (1080 × 1350 px on export). -->
+      <article class="slide red active" role="group" aria-roledescription="slide" aria-label="Slide 1 de 7">
+        <span class="number">01 / 07 — IDEIA</span>
+        <div>
+          <p>UMA REFLEXÃO SOBRE COMUNICAÇÃO</p>
+          <h2 style="margin-top:20px">
+            PUBLICIDADE<br>
+            NÃO É SÓ<br>
+            <span class="outline">VENDER.</span>
+          </h2>
+          <h2 class="italic" style="font-size:13cqw;margin-top:12px">
+            É fazer sentir.
+          </h2>
+        </div>
+        <span class="stamp">CRIAR<br> CONECTAR<br> IMPACTAR</span>
+        <div class="footer">
+          <span>PUBLICIDADE &amp; PROPAGANDA</span>
+          <span>DESLIZE →</span>
+        </div>
+      </article>
+
+      <article class="slide cream" role="group" aria-roledescription="slide" aria-label="Slide 2 de 7">
+        <span class="number">02 / CONEXÃO</span>
+        <div>
+          <span class="big-word" style="color:#e92f45">NÃO É<br>APENAS<br>UM PRODUTO.</span>
+          <p style="margin-top:30px">
+            Uma boa publicidade cria conexões, desperta emoções e faz pessoas se identificarem com marcas.
+          </p>
+        </div>
+        <div class="footer">
+          <span>CONEXÃO GERA MEMÓRIA</span>
+          <span>02 — 07</span>
+        </div>
+      </article>
+
+      <article class="slide pink" role="group" aria-roledescription="slide" aria-label="Slide 3 de 7">
+        <span class="number">03 / IDENTIDADE</span>
+        <div>
+          <p>O QUE FAZ UMA MARCA SER LEMBRADA?</p>
+          <h2 style="margin-top:25px">
+            NÃO É SÓ<br>
+            O QUE ELA<br>
+            <span class="italic">vende.</span>
+          </h2>
+          <p style="margin-top:25px">
+            São as experiências, os valores e os estilos de vida que ela representa.
+          </p>
+        </div>
+        <div class="footer">
+          <span>BRANDING &amp; IDENTIDADE</span>
+          <span>03 — 07</span>
+        </div>
+      </article>
+
+      <article class="slide black" role="group" aria-roledescription="slide" aria-label="Slide 4 de 7">
+        <span class="number">04 / CRIATIVIDADE</span>
+        <div>
+          <p>POR TRÁS DE UMA GRANDE CAMPANHA...</p>
+          <h2 style="margin-top:25px">
+            EXISTE<br>
+            MUITO<br>
+            <span style="color:#ff6379">MAIS.</span>
+          </h2>
+          <p style="margin-top:28px">
+            Pesquisa, planejamento, estratégia e uma boa dose de criatividade.
+          </p>
+        </div>
+        <div class="footer">
+          <span>IDEIAS COM PROPÓSITO</span>
+          <span>04 — 07</span>
+        </div>
+      </article>
+
+      <article class="slide red" role="group" aria-roledescription="slide" aria-label="Slide 5 de 7">
+        <span class="number">05 / ESTRATÉGIA</span>
+        <div>
+          <p>ESTÉTICA CHAMA ATENÇÃO.</p>
+          <h2 style="margin-top:25px">
+            MAS É A<br>
+            <span class="outline">ESTRATÉGIA</span><br>
+            QUE FAZ<br>
+            SENTIDO.
+          </h2>
+          <p style="margin-top:25px">
+            Uma campanha precisa ter propósito e falar com as pessoas certas.
+          </p>
+        </div>
+        <div class="footer">
+          <span>PLANEJAR É COMUNICAR</span>
+          <span>05 — 07</span>
+        </div>
+      </article>
+
+      <article class="slide cream" role="group" aria-roledescription="slide" aria-label="Slide 6 de 7">
+        <span class="number">06 / REFLEXÃO</span>
+        <div>
+          <p>NO FINAL, O QUE FICA?</p>
+          <h2 style="margin-top:25px">
+            A GENTE<br>
+            PODE ATÉ<br>
+            ESQUECER<br>
+            O ANÚNCIO.
+          </h2>
+          <p class="italic" style="font-size:7.4cqw;color:#e92f45;margin-top:25px">
+            Mas não a sensação.
+          </p>
+        </div>
+        <div class="footer">
+          <span>EMOÇÃO TAMBÉM COMUNICA</span>
+          <span>06 — 07</span>
+        </div>
+      </article>
+
+      <article class="slide pink" role="group" aria-roledescription="slide" aria-label="Slide 7 de 7">
+        <span class="number">07 / SUA VEZ</span>
+        <div>
+          <p>VAMOS CONVERSAR?</p>
+          <h2 style="margin-top:25px">
+            QUAL<br>
+            PROPAGANDA<br>
+            MARCOU<br>
+            <span class="italic">sua vida?</span>
+          </h2>
+          <p style="margin-top:30px">
+            Conta aqui nos comentários. Vamos trocar referências!
+          </p>
+          <h2 style="font-size:5.6cqw;margin-top:24px;color:#e92f45;letter-spacing:-.03em">
+            SALVE · COMPARTILHE · CONECTE
+          </h2>
+        </div>
+        <div class="footer">
+          <span>PUBLICIDADE &amp; PROPAGANDA</span>
+          <span>FIM — ♥</span>
+        </div>
+      </article>
+    </section>
+
+    <nav class="controls" aria-label="Navegação do carrossel">
+      <button class="control-button" id="previous" type="button" aria-label="Slide anterior">← Voltar</button>
+      <span class="counter" id="counter" aria-live="polite">01 / 07</span>
+      <button class="control-button" id="next" type="button" aria-label="Próximo slide">Avançar →</button>
+    </nav>
+
+    <div class="dots" id="dots" role="group" aria-label="Escolher slide"></div>
+    <p class="sr-only" id="slide-announcement" aria-live="polite"></p>
+
+    <button class="download" id="download" type="button">↓ Baixar slide em PNG</button>
+  </main>
+
+  <script>
+    (() => {
+      const slides = Array.from(document.querySelectorAll('.slide'));
+      const counter = document.getElementById('counter');
+      const dots = document.getElementById('dots');
+      const downloadButton = document.getElementById('download');
+      const carousel = document.querySelector('.carousel');
+      const announcement = document.getElementById('slide-announcement');
+      let current = 0;
+      let touchStartX = null;
+
+      const formatNumber = (number) => String(number).padStart(2, '0');
+
+      slides.forEach((_, index) => {
+        const dot = document.createElement('button');
+        dot.type = 'button';
+        dot.className = `dot${index === 0 ? ' active' : ''}`;
+        dot.setAttribute('aria-label', `Ir para o slide ${index + 1}`);
+        dot.setAttribute('aria-current', index === 0 ? 'true' : 'false');
+        dot.addEventListener('click', () => showSlide(index));
+        dots.appendChild(dot);
+      });
+
+      function showSlide(index) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((slide, slideIndex) => {
+          const isActive = slideIndex === current;
+          slide.classList.toggle('active', isActive);
+          slide.setAttribute('aria-hidden', String(!isActive));
+        });
+
+        Array.from(dots.children).forEach((dot, dotIndex) => {
+          const isActive = dotIndex === current;
+          dot.classList.toggle('active', isActive);
+          dot.setAttribute('aria-current', isActive ? 'true' : 'false');
+        });
+
+        counter.textContent = `${formatNumber(current + 1)} / ${formatNumber(slides.length)}`;
+        announcement.textContent = `Slide ${current + 1} de ${slides.length}`;
+      }
+
+      function changeSlide(direction) {
+        showSlide(current + direction);
+      }
+
+      document.getElementById('previous').addEventListener('click', () => changeSlide(-1));
+      document.getElementById('next').addEventListener('click', () => changeSlide(1));
+
+      downloadButton.addEventListener('click', async () => {
+        if (downloadButton.disabled) return;
+
+        const slide = slides[current];
+        const originalLabel = '↓ Baixar slide em PNG';
+        downloadButton.disabled = true;
+        downloadButton.textContent = 'Preparando imagem…';
+
+        try {
+          if (typeof window.html2canvas !== 'function') {
+            throw new Error('A biblioteca de exportação não foi carregada. Verifique a conexão e tente novamente.');
+          }
+
+          await document.fonts.ready;
+          const canvas = await window.html2canvas(slide, {
+            scale: 1080 / slide.getBoundingClientRect().width,
+            backgroundColor: null,
+            useCORS: true,
+            logging: false
+          });
+
+          const link = document.createElement('a');
+          link.download = `publicidade-slide-${formatNumber(current + 1)}.png`;
+          link.href = canvas.toDataURL('image/png');
+          link.click();
+        } catch (error) {
+          console.error('Não foi possível gerar a imagem do slide:', error);
+          downloadButton.textContent = 'Erro ao gerar. Tente novamente.';
+          window.setTimeout(() => {
+            downloadButton.textContent = originalLabel;
+          }, 2500);
+          return;
+        } finally {
+          downloadButton.disabled = false;
+          if (downloadButton.textContent === 'Preparando imagem…') {
+            downloadButton.textContent = originalLabel;
+          }
+        }
+      });
+
+      document.addEventListener('keydown', (event) => {
+        if (event.altKey || event.ctrlKey || event.metaKey) return;
+        if (event.key === 'ArrowRight') changeSlide(1);
+        if (event.key === 'ArrowLeft') changeSlide(-1);
+      });
+
+      carousel.addEventListener('touchstart', (event) => {
+        touchStartX = event.changedTouches[0].screenX;
+      }, { passive: true });
+
+      carousel.addEventListener('touchend', (event) => {
+        if (touchStartX === null) return;
+        const difference = event.changedTouches[0].screenX - touchStartX;
+        if (difference < -50) changeSlide(1);
+        if (difference > 50) changeSlide(-1);
+        touchStartX = null;
+      }, { passive: true });
+
+      showSlide(0);
+    })();
+  </script>
+</body>
+</html>
